@@ -1,0 +1,24 @@
+
+Procedural Compiled language: Joe
+
+
+* Type checking is supposed to be automatic and very very tolarent.
+
+* Every binary or unary operator return the result and if called without..
+  ...assignment it calls the display method to print it to the console.
+
+* 
+
+Tokens with description:
+
+ remember [variable_name] -> store
+ display [variable_name] -> print
+ ask [variable_name] ["What to ask for"] -> Asking user for data input at runtime
+ add [var1],[var2] -> summing values at var1 and var2
+ subtract ""
+ multiply ""
+ divide   ""
+ square [var] -> squaring values
+
+Function Definition: (Way too far fetched)
+ remember function [function_name] (vars) { [suite] }  # For example remember function cube (x) { multiply {multiply x,x},x }
