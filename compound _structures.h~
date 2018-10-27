@@ -1,0 +1,8 @@
+#ifndef COMPOUND_STRUCTURES_H_   /* Include guard */
+#define COMPOUND_STRUCTURES_H_
+
+RET_CONT pop (node ** ref );
+int push(int value ,  node ** ref );
+int print_list ( node * );
+
+#endif // COMPOUND_STRUCTURES_H_

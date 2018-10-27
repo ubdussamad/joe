@@ -1,0 +1,137 @@
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+void push();
+void traverse();
+int pop();
+struct node {
+	int value; //4 bytes carries the value at that node
+	struct node * next_ptr; // Points to the next node in the linked list and if it's the last node points to null.
+	int index; //Stores the index of this node for ease.
+};
+
+void push(struct node ** pointer,int value) {
+	struct node * chunk = (struct node *) malloc(16); //Decalring a new node pointer
+	chunk->value = value; // Putting the new value to the newly created node.
+	chunk->next_ptr = NULL; // The nodes points to a NULL pointer.
+	if ( *pointer == NULL ) {
+		*pointer = chunk; //Drefrencing the pointer to the struct's pointer and modifying it to  chunk's current position.
+		chunk->index = 0;
+		return;
+	}
+	struct node * pointer_to_struct = *pointer;
+	while (1) {
+		if ( (pointer_to_struct)->next_ptr == NULL ) {
+			(pointer_to_struct)->next_ptr = chunk;
+			chunk->index = pointer_to_struct->index + 1;
+			break;
+		}
+		else {
+			pointer_to_struct  = (struct node *) ( (long unsigned int)pointer_to_struct + 16 );
+		}
+	}
+}
+
+void travese(struct node * pointer) {
+	if (pointer == NULL) {
+		return;
+	}
+	printf("\n[");
+	while (1) {
+
+		if ( (pointer)->next_ptr == NULL ) {
+			printf("%d",pointer->value);
+			printf("\033[0;34m(%d)\033[0m,",pointer->index);  
+			break;
+		}
+		else {
+			printf("%d",pointer->value);
+			printf("\033[0;34m(%d)\033[0m,",pointer->index); 
+			pointer  = pointer->next_ptr;
+		}
+	}
+	printf("]\n\n");
+
+}
+
+int pop(struct node * pointer,int index,struct node ** ptr_to_ptr) {
+	struct node * first_ptr = pointer;
+	struct node * last_ptr;
+	struct node * next_ptr;
+	if (pointer == NULL){
+		printf("\033[1;31mUnderflow!\033[0m,Deletion from an list of length zero.\n");
+		return(-1);
+	}
+	if (index==-1){
+		while (1) {
+			if ( (pointer)->next_ptr == NULL ) {
+				last_ptr->next_ptr = NULL;
+				int tmp = pointer->value;
+				if (pointer==first_ptr){*ptr_to_ptr=NULL;}
+				free(pointer);
+				return(tmp);
+			}
+			else {
+				last_ptr = pointer;
+				pointer  = pointer->next_ptr;
+			}
+		}
+	}
+	if (index!=-1){
+		while (1) {
+			if ( (pointer)->index == index ) {
+				last_ptr->next_ptr = next_ptr;
+				int tmp = pointer->value;
+				if (pointer==first_ptr){*ptr_to_ptr=NULL;}
+				free(pointer);
+				return(tmp);
+			}
+			else {
+				last_ptr = pointer;
+				pointer  = pointer->next_ptr;
+				if (pointer->next_ptr == NULL && pointer->index != index){printf("\033[1;31mIndexError\033[0m,Bad Index.\n");return(-1);}
+				next_ptr = pointer->next_ptr;
+			}
+		}
+	}
+	return(0);
+}
+
+int main(void) {
+  int val,i;
+  struct node * list = NULL; //Primarily this pointer points to null;
+  while (1) {
+    //Suite
+    printf("\n\033[1;34mHit p , d , t, e:\033[0m");
+    char will;
+    scanf("%c",&will);
+
+    switch (will) {
+
+    case 'p': // code to be executed if n = 1;
+      //Push Suit
+      printf("Enter the value: ");
+      scanf("%d",&val);
+      push(&list,val);
+      break;
+	    
+    case 'd': // code to be executed if n = 2;
+      //Pop suit
+      printf("\nEnter the index: ");
+      scanf("%d",&i);
+      pop(list,i,&list);
+      break;
+	    
+    case 't':
+      //Travese suit
+      travese(list);
+      break;
+	    
+    default: // code to be executed if n doesn't match any cases
+      printf("Use another function!");
+      break;
+    }
+  }
+  return(0);
+}
+	
