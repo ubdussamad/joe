@@ -1,11 +1,104 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lib/cs.h"
+//#include "lib/cs.h"
 //#include <pcre2.h> //Don't include it without proper declarations
 
 
-int main ( void ) {
+typedef struct node node;
+struct node {
+  int value; // Cast it to char for generic stuff
+  node * successor;
+};
+
+typedef struct ret_conti RET_CONTI;
+struct ret_conti {
+  int length;
+  node * data;
+};
+
+typedef struct ret_cont RET_CONT;
+struct ret_cont {
+  int code;
+  int value;
+};
+
+/* FUNCTION DEFS */
+
+RET_CONT pop (node ** ref );
+
+int push(int value ,  node ** ref );
+
+int get_length ( node * );
+
+RET_CONT pop (node ** ref );
+int push(int value ,  node ** ref );
+void print_list ( node * );
+
+int get_length ( node * ptr ) {
+  if (ptr == NULL) { return(0); }
+  int count = 0;
+  while (1) {
+    if ( (*ptr).successor == NULL ) {
+      return(count+1);
+    }
+    else {
+      ptr = (*ptr).successor;
+      count++;
+    }
+  }
+}
+
+RET_CONT pop(node ** ref) {
+  if ((*ref) == NULL) { //Returns an container having the return status code and value
+    RET_CONT instance;
+    instance.code = -1;
+    return( instance); }
+  else if ( (**ref).successor == NULL ) {
+    RET_CONT instance;
+    instance.code = 0;
+    instance.value = (**ref).value;
+    free((*ref));
+    *ref = NULL;
+    return(instance); }
+  else {
+    node * last_ptr;
+    node * weak_ref_ptr = *ref;
+    while (1) {
+      if ( (*weak_ref_ptr).successor == NULL ) {
+	RET_CONT instance;
+	instance.code = 0;
+	instance.value = (*weak_ref_ptr).value;
+	free(weak_ref_ptr);
+	(*last_ptr).successor = NULL;
+	return(instance);
+      }
+      else {
+	last_ptr = weak_ref_ptr;
+	weak_ref_ptr = (*weak_ref_ptr).successor;
+      }
+    }
+  }
+}
+
+int push ( int value , node ** ref ) {
+  node * chunk = (node * ) malloc ( sizeof(node) );
+  if ( chunk == NULL ) {return(-1);} /* Malloc failed to get fresh memory */
+  (*chunk).value = value; // Type cast these 8 bytes into whatever the hell you want 
+  (*chunk).successor = NULL; // to make it genric
+  if (*ref==NULL) { *ref=chunk; } // Refrencing freshly alloc mem to the intial pointer
+  else { //Make sure that the pinter never goes to anything but NULL or node pointer
+    node * tmp_ref = *ref;
+    while (1) { if ( (*tmp_ref).successor == NULL ) {
+    (*tmp_ref).successor = chunk;break;}
+    tmp_ref = (*tmp_ref).successor;}}return(0);}
+
+void print_list( node * ref ) {
+if (ref == NULL) {return;}printf("\n[");while (1) {
+printf("%d, ",(*ref).value );ref = (*ref).successor;
+if (ref == NULL) {break;}}printf("]\n");}
+
+int test ( void ) {
   int will;
   int  val;
   node * ptr = NULL;
@@ -36,27 +129,40 @@ int main ( void ) {
 }
 
 
-/*
-int read_lines (char * line_ptr) {
-  FILE *file_pointer;
-  long long unsigned int nxt_buffer_len = 0;
-  const long long unsigned int line_count = 0;
+
+RET_CONTI read_line (void) {
+  static FILE *file_pointer;
   file_pointer = fopen( "test_text" , "r"); // Reading from file
-  
-  if (!line_count) {
-    
-    return(0);
+  RET_CONTI line;
+  if (!file_pointer) { // Fail safe
+    line.data = NULL;
+    line.length = -1;
+    return(line);
   }
-  
-  
-  if (!file_pointer) {return(-1);} // Fail safe
-  
+
+  line.data = NULL;
+  line.length = 0;
+  char c;
   do {
-    char c;
-    c = getc(file_pointer);
-    printf("%c",c);
+    c = getc(file_pointer); // Append each character everytime to the buffer
+    push( (int) c  , &line.data );
   }
-  while(c != EOF);
-  fclose(file_pointer);
-  return(nxt_buffer_len);
-  }*/
+  while(c != EOF ||(c != '\n'));
+  
+  line.length = get_length( line.data );
+  if (c == EOF) {
+    fclose(file_pointer);
+  }
+  return( line );
+  }
+
+int main (void) {
+  RET_CONTI z = read_line ();
+  char buffer [ z.length ];
+  for ( int i = 0; i != z.length ; i++ ) {
+    buffer[z.length - i] = (char) (pop( &z.data ).value); // Appending chars to the array buffer in reverse mannner from the stack 
+  }
+  printf("The string is: %s" , buffer );
+  return(0);
+}
+  

@@ -10,7 +10,19 @@ RET_CONT pop (node ** ref );
 int push(int value ,  node ** ref );
 void print_list ( node * );
 
-
+int get_length ( node * ptr ) {
+  if (ptr == NULL) { return(0); }
+  int count = 0;
+  while (1) {
+    if ( (*ptr).successor == NULL ) {
+      return(count+1);
+    }
+    else {
+      ptr = (*ptr).successor;
+      count++;
+    }
+  }
+}
 
 RET_CONT pop(node ** ref) {
   if ((*ref) == NULL) { //Returns an container having the return status code and value
