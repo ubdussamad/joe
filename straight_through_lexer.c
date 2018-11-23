@@ -3,60 +3,44 @@
 #include <string.h>
 #include "lib/cs.h"
 //#include <pcre2.h> //Don't include it without proper declarations
-
+lin_return_t subroutine(void);
 
 int main ( void ) {
-  int will;
-  int  val;
-  node * ptr = NULL;
-  while (1) {
-    printf("hit: ");
-    scanf("%d" , &will );
-    if ( will == 1) {
-      printf("enter: ");
-      scanf("%d" , &val );
-      push( val , &ptr );
-    }
-    else if (will == 2) {
-      print_list( ptr );
-    }
-    else if (will == 3) {
-      RET_CONT return_data = pop ( &ptr );
-      if (return_data.code == 0) {
-	printf("Popped value: %d\n",return_data.value );
-      }
-      else {
-	printf("Pop exited with returncode %d\n",return_data.code);
-      }
+  lin_return_t call =  subroutine();
+  int buffer[ call.length ];
+  int counter = 0;
+  for ( int i = 0 ; i <= call.length ; i++ ) {
+    counter++;
+    RET_CONT tmp = pop ( &call.data );
+    if ( tmp.code != -1 ) {
+      buffer[i] = tmp.value;
     }
     else {
-      printf("Wrong choice!");
+      break;
     }
   }
+  printf("Value: %d" , buffer[0] );
+  printf( " Counter was incremented %d times. \n" , counter );
+  
+  return(0);
 }
 
+lin_return_t subroutine(void) {
+  static FILE * file_pointer;
+  file_pointer = fopen ( "test_text" , "r" );
 
-/*
-int read_lines (char * line_ptr) {
-  FILE *file_pointer;
-  long long unsigned int nxt_buffer_len = 0;
-  const long long unsigned int line_count = 0;
-  file_pointer = fopen( "test_text" , "r"); // Reading from file
-  
-  if (!line_count) {
-    
-    return(0);
-  }
-  
-  
-  if (!file_pointer) {return(-1);} // Fail safe
-  
+  char c;
+  lin_return_t container;
+  int counter = 1;
   do {
-    char c;
-    c = getc(file_pointer);
-    printf("%c",c);
-  }
-  while(c != EOF);
-  fclose(file_pointer);
-  return(nxt_buffer_len);
-  }*/
+    c = fgetc( file_pointer );
+    if ( c == '\n' ) {
+      return ( container ); }
+    else {
+      counter++;
+      push ( (int) c , &container.data );
+    }
+  } while ( c != EOF );
+  container.length = -1;
+  return ( container );
+}

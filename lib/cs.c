@@ -4,13 +4,26 @@
 # include "cs.h"
 
 
+/* FUNCTION DEFS */
 
-
+int get_length ( node * );
 RET_CONT pop (node ** ref );
 int push(int value ,  node ** ref );
 void print_list ( node * );
 
-
+int get_length ( node * ptr ) {
+  if (ptr == NULL) { return(0); }
+  int count = 0;
+  while (1) {
+    if ( (*ptr).successor == NULL ) {
+      return(count+1);
+    }
+    else {
+      ptr = (*ptr).successor;
+      count++;
+    }
+  }
+}
 
 RET_CONT pop(node ** ref) {
   if ((*ref) == NULL) { //Returns an container having the return status code and value
@@ -60,34 +73,3 @@ void print_list( node * ref ) {
 if (ref == NULL) {return;}printf("\n[");while (1) {
 printf("%d, ",(*ref).value );ref = (*ref).successor;
 if (ref == NULL) {break;}}printf("]\n");}
-
-int test ( void ) {
-  int will;
-  int  val;
-  node * ptr = NULL;
-  while (1) {
-    printf("hit: ");
-    scanf("%d" , &will );
-    if ( will == 1) {
-      printf("enter: ");
-      scanf("%d" , &val );
-      push( val , &ptr );
-    }
-    else if (will == 2) {
-      print_list( ptr );
-    }
-    else if (will == 3) {
-      RET_CONT return_data = pop ( &ptr );
-      if (return_data.code == 0) {
-	printf("Popped value: %d\n",return_data.value );
-      }
-      else {
-	printf("Pop exited with returncode %d\n",return_data.code);
-      }
-    }
-    else {
-      printf("Wrong choice!");
-    }
-  }
-}
-	
