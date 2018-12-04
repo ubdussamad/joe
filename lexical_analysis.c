@@ -15,10 +15,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <regex.h>
+#include "lib/line_reader.h"
 
-int main ( void ) {
-
-  int * token = NULL; //Being an int
-  printf("Test RUn..");
+int main ( int agrc , char * argv [] ) {
   return(0);
 }
