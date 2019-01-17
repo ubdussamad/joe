@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define KRED  "\x1B[31m"
+#define KNRM  "\x1B[0m"
 
 long long unsigned  load_file ();
 typedef struct return_node return_node_t;
@@ -20,14 +22,21 @@ return_node_t get_line();
    Returns integer -2 if the requested line num is not present. */
 return_node_t get_line ( char * file , int usr_lin_num ) {
   static int state = 0;
+  return_node_t container;
+  
+  if ( file == NULL ) {
+    printf("%sFatal error:%s File not found.\n" , KRED , KNRM);
+    container.code = -1;
+    return(container);
+  }
   /* If the file is already read , no need to call read again.*/
   static long unsigned int buffer;if (!state) {
   long unsigned int temp = load_file( file );
-  buffer = temp;state = 1;}return_node_t container;
+  buffer = temp;state = 1;}
   if (buffer==0) { container.code = -1; return(container); }
   char * stringified_buffer = (char *) buffer;
   int counter = 0; int lin_num = 0; int  last_line_sp = 0;
-  while (0x1) { if ( strlen(stringified_buffer) < counter+1 ) {
+  while (0x1) { if(((int)strlen(stringified_buffer))< counter+1 ) {
   container.code = -2;return(container);}
   char ch = stringified_buffer[counter];
   if ( ( ch == '\n' ) ||  (ch == '\0') ) { lin_num++;

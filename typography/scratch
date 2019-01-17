@@ -3,6 +3,7 @@ Procedural Compiled language: Joe
 
 
 * Type checking is supposed to be automatic and very very tolarent.
+* Memory safety isn't really a goal as it'll definetly use a GC.
 
 * Every binary or unary operator return the result and if called without..
   ...assignment it calls the display method to print it to the console.
